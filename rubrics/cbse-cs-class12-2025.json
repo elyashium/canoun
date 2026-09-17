@@ -1,0 +1,92 @@
+{
+  "rubric_id": "cbse-cs-class12-2025",
+  "title": "CBSE Class 12 Computer Science Board Examination 2025",
+  "subject": "Computer Science",
+  "max_pages": 32,
+  "sections": [
+    {
+      "name": "Section A",
+      "max_marks": 5,
+      "attempt_any": null
+    },
+    {
+      "name": "Section B",
+      "max_marks": 8,
+      "attempt_any": null
+    }
+  ],
+  "questions": {
+    "Q1": {
+      "question_id": "Q1",
+      "section": "Section A",
+      "max_marks": 2,
+      "step_marks": [
+        {
+          "step_description": "Definition of mutable vs immutable types in Python",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Valid code example showing list mutability vs tuple/string immutability",
+          "max_marks": 1.0
+        }
+      ],
+      "model_answer": "In Python, mutable data types allow modification of their state or contents in-place without changing object identity (e.g. list, dict, set). Immutable types cannot be modified once created (e.g. int, float, str, tuple). Modifying an immutable type creates a new object in memory.",
+      "keywords": ["mutable", "immutable", "in-place modification", "list", "tuple", "object identity"]
+    },
+    "Q2": {
+      "question_id": "Q2",
+      "section": "Section A",
+      "max_marks": 3,
+      "step_marks": [
+        {
+          "step_description": "Explanation of LEGB rule (Local, Enclosing, Global, Built-in)",
+          "max_marks": 1.5
+        },
+        {
+          "step_description": "Role and syntax of the 'global' keyword in modifying module-level variables",
+          "max_marks": 1.5
+        }
+      ],
+      "model_answer": "Python resolves variable scope using the LEGB rule: Local (inside current function), Enclosing (in outer enclosing defs), Global (module namespace), and Built-in (built-in keywords and exceptions). To modify a global variable inside a local scope, the 'global' keyword must be explicitly declared before assignment.",
+      "keywords": ["LEGB", "Local", "Enclosing", "Global", "Built-in", "global keyword"]
+    },
+    "Q3": {
+      "question_id": "Q3",
+      "section": "Section B",
+      "max_marks": 4,
+      "step_marks": [
+        {
+          "step_description": "Correct definition of Stack and LIFO principle",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Implementation of Push function with overflow check or append",
+          "max_marks": 1.5
+        },
+        {
+          "step_description": "Implementation of Pop function with underflow check and return",
+          "max_marks": 1.5
+        }
+      ],
+      "model_answer": "A stack is a linear data structure that adheres to the Last In First Out (LIFO) principle. Operations: Push: def push(stack, item): stack.append(item). Pop: def pop(stack): if len(stack) == 0: return 'Underflow' else: return stack.pop().",
+      "keywords": ["LIFO", "Push", "Pop", "Underflow", "stack.append", "stack.pop"]
+    },
+    "Q4": {
+      "question_id": "Q4",
+      "section": "Section B",
+      "max_marks": 4,
+      "step_marks": [
+        {
+          "step_description": "SQL query with GROUP BY clause on Department",
+          "max_marks": 2.0
+        },
+        {
+          "step_description": "Correct usage of HAVING clause to filter aggregate COUNT(*) > 5 or AVG(Salary) > 50000",
+          "max_marks": 2.0
+        }
+      ],
+      "model_answer": "SELECT Department, COUNT(*), AVG(Salary) FROM Employee GROUP BY Department HAVING COUNT(*) > 5; The GROUP BY clause groups rows sharing attribute values, while HAVING filters groups based on aggregate conditions (unlike WHERE which filters individual rows).",
+      "keywords": ["SELECT", "GROUP BY", "HAVING", "COUNT", "AVG", "aggregate filter"]
+    }
+  }
+}

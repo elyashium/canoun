@@ -1,0 +1,151 @@
+{
+  "rubric_id": "cbse-physics-class12-2025",
+  "title": "CBSE Class 12 Physics Board Examination 2025",
+  "subject": "Physics",
+  "max_pages": 32,
+  "sections": [
+    {
+      "name": "Section A",
+      "max_marks": 5,
+      "attempt_any": null
+    },
+    {
+      "name": "Section B",
+      "max_marks": 6,
+      "attempt_any": null
+    },
+    {
+      "name": "Section C",
+      "max_marks": 10,
+      "attempt_any": 2
+    }
+  ],
+  "questions": {
+    "Q1": {
+      "question_id": "Q1",
+      "section": "Section A",
+      "max_marks": 2,
+      "step_marks": [
+        {
+          "step_description": "Definition of electric flux and Gauss's law statement",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Mathematical formula Phi = q_enclosed / epsilon_0 with SI unit (N m^2 C^-1)",
+          "max_marks": 1.0
+        }
+      ],
+      "model_answer": "Gauss's law states that the total electric flux through a closed surface is equal to 1/epsilon_0 times the net electric charge enclosed by the surface. Formula: Phi = oint E . dA = q / epsilon_0. SI unit: N m^2 C^-1 (or V m).",
+      "keywords": ["electric flux", "closed surface", "q/epsilon_0", "enclosed charge", "N m^2 C^-1"]
+    },
+    "Q2": {
+      "question_id": "Q2",
+      "section": "Section A",
+      "max_marks": 3,
+      "step_marks": [
+        {
+          "step_description": "State Snell's law and total internal reflection condition",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Derivation: sin(i_c) = 1/mu or mu = 1/sin(i_c)",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Correct ray diagram illustrating critical angle and reflected ray",
+          "max_marks": 1.0
+        }
+      ],
+      "model_answer": "Total internal reflection occurs when light travels from a denser medium to a rarer medium and the angle of incidence exceeds the critical angle. By Snell's law, mu_1 sin(i_c) = mu_2 sin(90 deg) => sin(i_c) = 1/mu (for rarer air medium mu_2=1). A neat diagram showing refracted ray at 90 degrees along the interface at critical angle.",
+      "keywords": ["denser to rarer", "critical angle", "sin(i_c) = 1/mu", "angle of refraction 90 degrees", "ray diagram"]
+    },
+    "Q3": {
+      "question_id": "Q3",
+      "section": "Section B",
+      "max_marks": 3,
+      "step_marks": [
+        {
+          "step_description": "Formula for cyclotron frequency or radius r = mv / (qB)",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Substitution: T = 2*pi*m / (qB) and frequency f = 1/T = qB / (2*pi*m)",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Conclusion stating resonance condition independent of velocity/radius",
+          "max_marks": 1.0
+        }
+      ],
+      "model_answer": "In a cyclotron, the magnetic Lorentz force provides centripetal acceleration: qvB = mv^2 / r => r = mv / (qB). Period T = 2*pi*r / v = 2*pi*m / (qB). Thus cyclotron frequency f = 1/T = qB / (2*pi*m). This frequency is independent of speed and orbital radius.",
+      "keywords": ["qvB = mv^2/r", "r = mv/qB", "f = qB / 2*pi*m", "independent of speed and radius"]
+    },
+    "Q4": {
+      "question_id": "Q4",
+      "section": "Section B",
+      "max_marks": 3,
+      "step_marks": [
+        {
+          "step_description": "Einstein's photoelectric equation h*nu = Phi_0 + K_max",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Explanation of threshold frequency nu_0 where K_max = 0",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Explanation why kinetic energy depends on frequency, not intensity",
+          "max_marks": 1.0
+        }
+      ],
+      "model_answer": "Einstein's photoelectric equation: h*nu = h*nu_0 + 1/2 m v_max^2 = Phi_0 + K_max. Here h*nu is incident photon energy, Phi_0 is work function, and K_max is maximum kinetic energy of emitted photoelectrons. Below threshold frequency nu_0, no emission occurs regardless of intensity.",
+      "keywords": ["h*nu = Phi_0 + K_max", "threshold frequency", "work function", "independent of intensity"]
+    },
+    "Q5": {
+      "question_id": "Q5",
+      "section": "Section C",
+      "max_marks": 5,
+      "step_marks": [
+        {
+          "step_description": "Working principle of transformer and mutual induction statement",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Derivation of transformation ratio: V_s / V_p = N_s / N_p",
+          "max_marks": 1.5
+        },
+        {
+          "step_description": "Current relation for ideal transformer: I_p * V_p = I_s * V_s",
+          "max_marks": 1.0
+        },
+        {
+          "step_description": "Enumerate two energy losses (eddy currents, hysteresis) and mitigation",
+          "max_marks": 1.5
+        }
+      ],
+      "model_answer": "A transformer operates on the principle of mutual induction. When alternating current flows through the primary coil, a changing magnetic flux is linked with the secondary coil, inducing an emf. By Faraday's law, e_p = -N_p dPhi/dt and e_s = -N_s dPhi/dt, yielding V_s/V_p = N_s/N_p. For 100% efficiency, input power = output power: V_p I_p = V_s I_s. Energy losses: 1) Eddy current losses (minimized by using laminated iron cores), 2) Hysteresis loss (minimized by using soft iron).",
+      "keywords": ["mutual induction", "Vs/Vp = Ns/Np", "Ip/Is = Ns/Np", "eddy currents", "laminated core", "hysteresis"]
+    },
+    "Q6": {
+      "question_id": "Q6",
+      "section": "Section C",
+      "max_marks": 5,
+      "step_marks": [
+        {
+          "step_description": "Biot-Savart law statement and formula dB = (mu_0 / 4*pi) * (I dl x r) / r^3",
+          "max_marks": 1.5
+        },
+        {
+          "step_description": "Integration along circular loop axis: B = mu_0 * I * R^2 / (2 * (R^2 + x^2)^(3/2))",
+          "max_marks": 2.5
+        },
+        {
+          "step_description": "Special case at center (x = 0): B = mu_0 * I / (2R)",
+          "max_marks": 1.0
+        }
+      ],
+      "model_answer": "According to Biot-Savart law, dB = (mu_0 / 4*pi) * (I dl sin(theta)) / r^2. Considering an axial point at distance x from the center of a circular loop of radius R, the components perpendicular to the axis cancel due to symmetry, while axial components sum: B = int dB_x = int dB * (R/r). Since r = sqrt(R^2 + x^2), B = (mu_0 * I * R^2) / (2 * (R^2 + x^2)^(3/2)). At center (x=0), B = (mu_0 * I) / (2R).",
+      "keywords": ["Biot-Savart", "dB = (mu_0/4*pi) * I dl/r^2", "B = mu_0 I R^2 / 2(R^2+x^2)^(3/2)", "center B = mu_0 I / 2R"]
+    }
+  }
+}
