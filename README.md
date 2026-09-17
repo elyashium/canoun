@@ -7,7 +7,7 @@
 [![DynamoDB](https://img.shields.io/badge/Storage-DynamoDB%20On--Demand-4053D6?logo=amazondynamodb)](https://aws.amazon.com/dynamodb/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An enterprise-grade, asynchronous AI evaluation pipeline designed for large-scale Indian board and university examinations (CBSE, ICSE, State Boards). Engineered on a serverless AWS stack optimized to run strictly within a **$100 AWS credit budget** for the WeMakeDevs × AWS "First Commit" Hackathon.
+An enterprise-grade, asynchronous AI evaluation pipeline designed for large-scale Indian board and university examinations (CBSE, ICSE, State Boards). Engineered on a serverless AWS stack 
 
 ---
 
