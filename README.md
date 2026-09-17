@@ -1,4 +1,4 @@
-<img width="202" height="61" alt="image" src="https://github.com/user-attachments/assets/4fbd7b89-c4d7-4f15-8d8a-575471cc3d49" />
+
 
 The pipeline is fully operational and implements a highly optimized, dual-layer architecture designed to balance precision, scale, and compute costs.
 
