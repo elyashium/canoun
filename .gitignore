@@ -1,7 +1,21 @@
+# Python
 venv/
+.venv/
 __pycache__/
 *.pyc
 .env
 .DS_Store
 temp_uploads/
 .pytest_cache/
+
+# CDK & Node
+node_modules/
+**/node_modules/
+cdk.out/
+**/cdk.out/
+.cdk.staging/
+**/.cdk.staging/
+infra/lib/**/*.js
+infra/lib/**/*.d.ts
+infra/bin/**/*.js
+infra/bin/**/*.d.ts
