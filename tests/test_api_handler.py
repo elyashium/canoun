@@ -26,6 +26,16 @@ class MockTable:
         else:
             self.items[Item["job_id"]] = Item
 
+def make_auth_context(user_id: str) -> dict:
+    """Build a synthetic HTTP API JWT authorizer requestContext for a given user sub."""
+    return {
+        "authorizer": {
+            "jwt": {
+                "claims": {"sub": user_id}
+            }
+        }
+    }
+
 def test_api_handler_cors_options():
     event = {
         "httpMethod": "OPTIONS",
@@ -35,11 +45,36 @@ def test_api_handler_cors_options():
     assert resp["statusCode"] == 200
     assert resp["headers"]["Access-Control-Allow-Origin"] == "*"
 
+def test_unauthenticated_request_returns_401():
+    """With no Cognito claims in requestContext the handler must fail closed with 401."""
+    event = {
+        "httpMethod": "GET",
+        "path": "/api/jobs/job-xyz",
+        # No requestContext.authorizer at all
+    }
+    resp = lambda_handler(event, DummyContext())
+    assert resp["statusCode"] == 401
+    assert "Unauthorized" in resp["body"]
+
+def test_missing_idempotency_key_returns_400():
+    """POST /api/jobs without Idempotency-Key header must return 400."""
+    event = {
+        "httpMethod": "POST",
+        "path": "/api/jobs",
+        "requestContext": make_auth_context("teacher-abc"),
+        "headers": {},
+        "body": json.dumps({"rubric_id": "rubric-1"}),
+    }
+    resp = lambda_handler(event, DummyContext())
+    assert resp["statusCode"] == 400
+    assert "Idempotency-Key" in resp["body"]
+
 def test_api_handler_create_job_missing_rubric():
     event = {
         "httpMethod": "POST",
         "path": "/api/jobs",
-        "headers": {"x-user-id": "teacher-123"},
+        "requestContext": make_auth_context("teacher-123"),
+        "headers": {"Idempotency-Key": "key-abc"},
         "body": json.dumps({}),
     }
     resp = lambda_handler(event, DummyContext())
@@ -83,7 +118,7 @@ def test_reviewer_grants_authorization(monkeypatch):
     event_owner = {
         "httpMethod": "GET",
         "path": f"/api/jobs/{job_id}",
-        "headers": {"x-user-id": owner_id},
+        "requestContext": make_auth_context(owner_id),
     }
     resp = lambda_handler(event_owner, DummyContext())
     assert resp["statusCode"] == 200
@@ -95,7 +130,7 @@ def test_reviewer_grants_authorization(monkeypatch):
     event_stranger = {
         "httpMethod": "GET",
         "path": f"/api/jobs/{job_id}",
-        "headers": {"x-user-id": stranger_id},
+        "requestContext": make_auth_context(stranger_id),
     }
     resp_stranger = lambda_handler(event_stranger, DummyContext())
     assert resp_stranger["statusCode"] == 403
@@ -105,7 +140,7 @@ def test_reviewer_grants_authorization(monkeypatch):
     event_illegal_grant = {
         "httpMethod": "POST",
         "path": f"/api/jobs/{job_id}/grant",
-        "headers": {"x-user-id": stranger_id},
+        "requestContext": make_auth_context(stranger_id),
         "body": json.dumps({"reviewer_id": "someone-else"}),
     }
     resp_illegal = lambda_handler(event_illegal_grant, DummyContext())
@@ -115,7 +150,7 @@ def test_reviewer_grants_authorization(monkeypatch):
     event_grant = {
         "httpMethod": "POST",
         "path": f"/api/jobs/{job_id}/grant",
-        "headers": {"x-user-id": owner_id},
+        "requestContext": make_auth_context(owner_id),
         "body": json.dumps({"reviewer_id": reviewer_id, "ttl_hours": 48}),
     }
     resp_grant = lambda_handler(event_grant, DummyContext())
@@ -126,7 +161,7 @@ def test_reviewer_grants_authorization(monkeypatch):
     event_reviewer = {
         "httpMethod": "GET",
         "path": f"/api/jobs/{job_id}",
-        "headers": {"x-user-id": reviewer_id},
+        "requestContext": make_auth_context(reviewer_id),
     }
     resp_reviewer = lambda_handler(event_reviewer, DummyContext())
     assert resp_reviewer["statusCode"] == 200

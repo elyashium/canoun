@@ -3,8 +3,6 @@ import { Construct } from 'constructs';
 import { VpcConstruct } from './constructs/vpc-construct';
 import { StorageConstruct } from './constructs/storage-construct';
 import { QueuesConstruct } from './constructs/queues-construct';
-import { EmbeddingCacheConstruct } from './constructs/embedding-cache-construct';
-import { SageMakerConstruct } from './constructs/sagemaker-construct';
 import { StateMachineConstruct } from './constructs/state-machine-construct';
 import { ApiConstruct } from './constructs/api-construct';
 import { AlarmsConstruct } from './constructs/alarms-construct';
@@ -32,20 +30,8 @@ export class InfraStack extends cdk.Stack {
       rawBookletsBucket: storageConstruct.rawBookletsBucket,
     });
 
-    // 4. Embedding Cache Sidecar (ECS Fargate Spot + Internal ALB)
-    const embeddingCacheConstruct = new EmbeddingCacheConstruct(this, 'EmbeddingCache', {
-      vpc: vpcConstruct.vpc,
-      sidecarSecurityGroup: vpcConstruct.sidecarSecurityGroup,
-      environment: env,
-    });
-
-    // 5. SageMaker Calibration Endpoint
-    const sageMakerConstruct = new SageMakerConstruct(this, 'SageMaker', {
-      asyncResultsBucket: storageConstruct.asyncResultsBucket,
-      environment: env,
-    });
-
-    // 6. Step Functions Pipeline (Splitter -> OCR Map -> Aggregator -> Scoring Map -> Finalizer)
+    // 4. Step Functions Pipeline (Splitter -> OCR Map -> Aggregator -> Scoring Map -> Finalizer)
+    // NOTE: Embedding Cache sidecar (Fargate) and SageMaker removed — scoring uses Bedrock in-process.
     const stateMachineConstruct = new StateMachineConstruct(this, 'StateMachine', {
       vpc: vpcConstruct.vpc,
       lambdaSecurityGroup: vpcConstruct.lambdaSecurityGroup,
@@ -53,12 +39,10 @@ export class InfraStack extends cdk.Stack {
       pageImagesBucket: storageConstruct.pageImagesBucket,
       evaluationsTable: storageConstruct.evaluationsTable,
       rubricsTable: storageConstruct.rubricsTable,
-      embeddingCacheUrl: embeddingCacheConstruct.serviceUrl,
-      sagemakerEndpointName: sageMakerConstruct.endpointName,
       environment: env,
     });
 
-    // 7. API Gateway & Cognito Auth & Trigger Lambda
+    // 5. API Gateway & Cognito Auth & Trigger Lambda
     const apiConstruct = new ApiConstruct(this, 'Api', {
       vpc: vpcConstruct.vpc,
       lambdaSecurityGroup: vpcConstruct.lambdaSecurityGroup,
@@ -72,7 +56,7 @@ export class InfraStack extends cdk.Stack {
       environment: env,
     });
 
-    // 8. CloudWatch Alarms & SNS Alerting
+    // 6. CloudWatch Alarms & SNS Alerting
     const alarmsConstruct = new AlarmsConstruct(this, 'Alarms', {
       stateMachine: stateMachineConstruct.stateMachine,
       triggerDlq: queuesConstruct.triggerDlq,
@@ -82,13 +66,13 @@ export class InfraStack extends cdk.Stack {
       environment: env,
     });
 
-    // 9. Cost Guardrails ($100 AWS Budget & notifications)
+    // 7. Cost Guardrails ($100 AWS Budget & notifications)
     new CostConstruct(this, 'CostBudget', {
       alertTopic: alarmsConstruct.alertTopic,
       environment: env,
     });
 
-    // 10. Audit Logging (CloudTrail)
+    // 8. Audit Logging (CloudTrail)
     new AuditConstruct(this, 'Audit', { environment: env });
 
     // Stack Outputs
@@ -122,10 +106,6 @@ export class InfraStack extends cdk.Stack {
       exportName: `EvaluatorStateMachineArn-${env}`,
     });
 
-    new cdk.CfnOutput(this, 'EmbeddingCacheServiceUrl', {
-      value: embeddingCacheConstruct.serviceUrl,
-      description: 'Cloud Map Private DNS Endpoint for Embedding Cache Sidecar',
-      exportName: `EvaluatorEmbeddingCacheUrl-${env}`,
-    });
+
   }
 }

@@ -32,7 +32,7 @@ def _cors_headers() -> Dict[str, str]:
     }
 
 def _extract_user_id(event: Dict[str, Any]) -> str:
-    """Extract Cognito user sub from requestContext or fall back to local test identity."""
+    """Extract Cognito user sub from requestContext. Raises ValueError if not authenticated."""
     rc = event.get("requestContext", {})
     # HTTP API JWT authorizer
     authorizer = rc.get("authorizer", {})
@@ -43,9 +43,8 @@ def _extract_user_id(event: Dict[str, Any]) -> str:
     claims = authorizer.get("claims", {})
     if "sub" in claims:
         return claims["sub"]
-    # Fallback / header for local development
-    headers = event.get("headers") or {}
-    return headers.get("x-user-id", "demo-teacher-001")
+    # No authenticated identity — fail closed. Never fall back to a test identity in Lambda.
+    raise ValueError("Unauthenticated request: no Cognito sub found in requestContext")
 
 def _check_reviewer_grant(job_id: str, user_id: str) -> bool:
     """Check if requesting user has an active grant for this job."""
@@ -83,24 +82,30 @@ def handle_create_job(event: Dict[str, Any], user_id: str) -> Dict[str, Any]:
             "body": json.dumps({"error": "Missing required field: rubric_id"}),
         }
 
+    if not idempotency_key:
+        return {
+            "statusCode": 400,
+            "headers": _cors_headers(),
+            "body": json.dumps({"error": "Missing required header: Idempotency-Key"}),
+        }
+
     job_id = f"job-{uuid.uuid4()}"
 
-    # Handle Idempotency
-    if idempotency_key:
-        is_new, existing = check_or_reserve_idempotency_key(
-            table_name=IDEMPOTENCY_TABLE,
-            idempotency_key=idempotency_key,
-            job_id=job_id,
-            user_id=user_id,
-            ttl_hours=24,
-        )
-        if not is_new and existing and existing.get("response_payload"):
-            logger.info(f"Returning cached idempotent response for key {idempotency_key}")
-            return {
-                "statusCode": 200,
-                "headers": _cors_headers(),
-                "body": existing["response_payload"],
-            }
+    # Enforce idempotency — mandatory, not optional
+    is_new, existing = check_or_reserve_idempotency_key(
+        table_name=IDEMPOTENCY_TABLE,
+        idempotency_key=idempotency_key,
+        job_id=job_id,
+        user_id=user_id,
+        ttl_hours=24,
+    )
+    if not is_new and existing and existing.get("response_payload"):
+        logger.info(f"Returning cached idempotent response for key {idempotency_key}")
+        return {
+            "statusCode": 200,
+            "headers": _cors_headers(),
+            "body": existing["response_payload"],
+        }
 
     s3_key = f"uploads/{user_id}/{job_id}/booklet.pdf"
 
@@ -252,7 +257,15 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     if method == "OPTIONS":
         return {"statusCode": 200, "headers": _cors_headers(), "body": ""}
 
-    user_id = _extract_user_id(event)
+    try:
+        user_id = _extract_user_id(event)
+    except ValueError as e:
+        logger.warning(str(e))
+        return {
+            "statusCode": 401,
+            "headers": _cors_headers(),
+            "body": json.dumps({"error": "Unauthorized"}),
+        }
 
     # Simple route matching
     if method == "POST" and (path.endswith("/api/jobs") or path.endswith("/jobs")):

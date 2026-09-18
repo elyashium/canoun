@@ -8,7 +8,6 @@ export interface VpcConstructProps {
 export class VpcConstruct extends Construct {
   public readonly vpc: ec2.IVpc;
   public readonly lambdaSecurityGroup: ec2.ISecurityGroup;
-  public readonly sidecarSecurityGroup: ec2.ISecurityGroup;
   public readonly endpointSecurityGroup: ec2.ISecurityGroup;
 
   constructor(scope: Construct, id: string, props: VpcConstructProps) {
@@ -40,29 +39,11 @@ export class VpcConstruct extends Construct {
       allowAllOutbound: true,
     });
 
-    this.sidecarSecurityGroup = new ec2.SecurityGroup(this, 'SidecarSecurityGroup', {
-      vpc: this.vpc,
-      description: 'Security group for embedding cache sidecar',
-      allowAllOutbound: true,
-    });
-
-    // Allow VPC endpoints to accept HTTPS traffic from Lambdas and Sidecars
+    // Allow VPC endpoints to accept HTTPS traffic from Lambdas
     this.endpointSecurityGroup.addIngressRule(
       this.lambdaSecurityGroup,
       ec2.Port.tcp(443),
       'Allow Lambdas to reach VPC interface endpoints'
-    );
-    this.endpointSecurityGroup.addIngressRule(
-      this.sidecarSecurityGroup,
-      ec2.Port.tcp(443),
-      'Allow Sidecar tasks to reach VPC interface endpoints (ECR pull)'
-    );
-
-    // Allow Lambdas to communicate with sidecar on port 8000
-    this.sidecarSecurityGroup.addIngressRule(
-      this.lambdaSecurityGroup,
-      ec2.Port.tcp(8000),
-      'Allow Lambdas to reach embedding cache on port 8000'
     );
 
     // Free Gateway VPC Endpoints for S3 (also required for ECR image layer pulls) and DynamoDB
@@ -74,12 +55,10 @@ export class VpcConstruct extends Construct {
       service: ec2.GatewayVpcEndpointAwsService.DYNAMODB,
     });
 
-    // Interface Endpoints to eliminate NAT Gateway for AWS SDK calls & ECS ECR pulls:
-    // NOTE: SageMaker runtime endpoint intentionally omitted to prevent idle billing ($0.02/hr).
+    // Interface Endpoints to eliminate NAT Gateway for AWS SDK calls
+    // NOTE: ECR endpoints removed (no Fargate). SageMaker runtime omitted to prevent idle billing.
     const interfaceServices = [
       { name: 'BedrockRuntimeEndpoint', service: ec2.InterfaceVpcEndpointAwsService.BEDROCK_RUNTIME },
-      { name: 'EcrApiEndpoint', service: ec2.InterfaceVpcEndpointAwsService.ECR },
-      { name: 'EcrDkrEndpoint', service: ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER },
       { name: 'SecretsManagerEndpoint', service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER },
       { name: 'SqsEndpoint', service: ec2.InterfaceVpcEndpointAwsService.SQS },
       { name: 'StepFunctionsEndpoint', service: ec2.InterfaceVpcEndpointAwsService.STEP_FUNCTIONS },

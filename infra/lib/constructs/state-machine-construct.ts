@@ -16,8 +16,6 @@ export interface StateMachineConstructProps {
   pageImagesBucket: s3.IBucket;
   evaluationsTable: dynamodb.ITable;
   rubricsTable: dynamodb.ITable;
-  embeddingCacheUrl?: string;
-  sagemakerEndpointName?: string;
   environment: string;
 }
 
@@ -54,8 +52,6 @@ export class StateMachineConstruct extends Construct {
       EVALUATIONS_TABLE: props.evaluationsTable.tableName,
       RUBRICS_TABLE: props.rubricsTable.tableName,
       BEDROCK_MODEL_ID: 'anthropic.claude-3-5-haiku-20241022-v1:0',
-      EMBEDDING_CACHE_URL: props.embeddingCacheUrl || '',
-      SAGEMAKER_ENDPOINT_NAME: props.sagemakerEndpointName || '',
     };
 
     // Shared Bedrock Policy
