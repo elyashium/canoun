@@ -1,4 +1,4 @@
-# Evaluator.ai — AI-Powered Examination Answer Sheet Evaluator on AWS
+# Canoun — AI-Powered Examination Answer Sheet Evaluator on AWS
 
 [![AWS](https://img.shields.io/badge/AWS-Cloud%20Native-232F3E?logo=amazon-aws)](https://aws.amazon.com/)
 [![CDK v2](https://img.shields.io/badge/IaC-AWS%20CDK%20TypeScript-FF9900?logo=typescript)](https://aws.amazon.com/cdk/)
@@ -7,7 +7,7 @@
 [![DynamoDB](https://img.shields.io/badge/Storage-DynamoDB%20On--Demand-4053D6?logo=amazondynamodb)](https://aws.amazon.com/dynamodb/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An enterprise-grade, asynchronous AI evaluation pipeline designed for large-scale Indian board and university examinations (CBSE, ICSE, State Boards). Engineered on a serverless AWS stack 
+An enterprise-grade, asynchronous AI evaluation pipeline designed for large-scale Indian board and university examinations (CBSE, ICSE, State Boards) 
 
 ---
 
