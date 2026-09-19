@@ -9,7 +9,6 @@
 
 An enterprise-grade, asynchronous AI evaluation pipeline designed for large-scale Indian board and university examinations (CBSE, ICSE, State Boards) 
 
----
 
 ## Architecture Overview
 
