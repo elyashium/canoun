@@ -57,37 +57,6 @@ Teacher Browser / Client
 
 ---
 
-## Key Technical Highlights
-
-### 1. Zero NAT Gateway Architecture (< $100 Budget)
-- **Problem**: A single standard AWS NAT Gateway incurs ~$32/month in idle baseline charges, draining 30%+ of the hackathon credit before processing a single paper.
-- **Solution**: Evaluator.ai runs all Lambdas in isolated private subnets with:
-  - Free Gateway Endpoints: **Amazon S3** and **Amazon DynamoDB**.
-  - Interface Endpoints: **Amazon Bedrock Runtime**, **Amazon ECR** (`ecr.api` & `ecr.dkr`), **AWS Secrets Manager**, **Amazon SQS**, **AWS Step Functions**, and **Amazon CloudWatch Logs**.
-  - **No NAT Gateway is provisioned**, saving ~$32/month while keeping compute completely secure.
-
-### 2. AWS Cloud Map Private DNS (No ALB Baseline Cost)
-- Instead of provisioning an Application Load Balancer (~$16/mo baseline + LCU usage), the embedding cache sidecar registers with **AWS Cloud Map Service Discovery** (`evaluator.local`).
-- Lambdas resolve the sidecar directly at `http://embedding-cache.evaluator.local:8000` inside the VPC with zero load-balancer overhead.
-- Runs on **ECS Fargate Spot** (70% compute discount).
-- The worker automatically fails over to an **in-process fastembed/token similarity fallback** if the sidecar is scaled to 0 tasks.
-
-### 3. Indian Examination Native Evaluation
-- **Strict Step-Marking Breakdown**: Allocates marks for formulas, substitutions, derivations, and final calculations with SI units independently.
-- **`attempt_any` Choice Selection**: Dynamically processes sections with choices (e.g. CBSE Class 12 Physics Section C: "Attempt any 2 of 3"). Evaluates all attempted questions, awards marks for the highest-scoring attempts, and flags extra attempts.
-- **Structured Failure-Mode Tagging**: Tags exam-specific student error patterns (`MISSING_UNITS`, `INCORRECT_FORMULA`, `CONCEPTUAL_ERROR`, `ARITHMETIC_ERROR`, `INCOMPLETE_DERIVATION`).
-- **Multi-Page Continuation Stitching**: Aggregates answers written across page boundaries (e.g. Q1 started on page 2 and finished on page 3) before evaluation.
-
-### 4. Enterprise Security & Data Governance
-- **Strict Idempotency**: DynamoDB conditional writes using `attribute_not_exists(idempotency_key)` eliminate race conditions and double-billing on network retries.
-- **Inter-Rater Reliability (IRR) Delegations**: Secure `ReviewerGrants` table allows paper owners to delegate temporary read access to external moderators. Expiry is verified synchronously at read-time.
-- **PII Redaction**: Structured JSON logging automatically sanitizes 12-digit Aadhaar numbers, CBSE/State Board roll numbers, exam center codes, phone numbers, and emails.
-- **S3 CORS & Scoped Origin Security**: Replaced wildcard CORS with strict origin allowances (`localhost:3000`, `https://evaluator.ai`).
-- **CloudTrail Audit Logging**: Dedicated compliance trail logging all management and data-access events.
-- **CloudWatch Cost Guardrail**: Real-time AWS Budget strictly set to $100 with automated alerts at 80% ($80) and 100% ($100).
-
----
-
 ## Repository Structure
 
 ```
