@@ -13,47 +13,8 @@ An enterprise-grade, asynchronous AI evaluation pipeline designed for large-scal
 
 ## Architecture Overview
 
-```
-Teacher Browser / Client
-    │
-    │ 1. POST /api/jobs (Idempotency Key)
-    ▼
-[ Amazon API Gateway (HTTP v2) ]  ── Rate Limiting (100 rps / 200 burst) + CloudWatch Access Logs
-    │
-    ▼
-[ ApiHandler Lambda ] ── Validates rubric, reserves DynamoDB idempotency key,
-    │                    generates 15-minute presigned S3 POST URL (100MB limit)
-    ▼
-[ Amazon S3: raw-booklets ] ── Upload Booklet PDF (Direct teacher browser upload)
-    │
-    │ ObjectCreated Event
-    ▼
-[ Amazon SQS: trigger-queue ] ── DLQ with redrive after 3 retries
-    │
-    ▼
-[ TriggerHandler Lambda ] ── Updates DynamoDB to PROCESSING, starts Step Functions
-    │
-    ▼
-[ AWS Step Functions Workflow ]
-    ├── 1. Splitter Lambda: PyMuPDF 200 DPI PNG split, validates %PDF- header, enforces max_pages
-    │
-    ├── 2. OCR Map State (Concurrency: 5):
-    │      └── OcrWorker Lambda: Amazon Bedrock Claude 3.5 Haiku Multimodal Vision transcription
-    │          (Exponential backoff retry on ThrottlingException)
-    │
-    ├── 3. Aggregator Lambda: Stitches multi-page answers, groups sections, maps rubric questions
-    │
-    ├── 4. Scoring Map State (Concurrency: 5):
-    │      └── ScoringWorker Lambda:
-    │          ├── Semantic Similarity: Cloud Map ECS Fargate Spot Sidecar (or in-process fallback)
-    │          ├── Step-Marking Judge: Bedrock Claude 3.5 Haiku with failure-mode tagging
-    │          └── Confidence Calibrator: Composite score (OCR clarity + similarity + judge)
-    │
-    ├── 5. Finalizer Lambda: Sums section totals, evaluates attempt_any questions (takes top marks),
-    │      writes DONE report to DynamoDB Evaluations table, and cleans up ephemeral S3 page images
-    │
-    └── Catch Block ──► FailHandler Lambda: Marks job FAILED in DynamoDB with sanitized error details
-```
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/018f3a30-ab69-44e8-8462-c7b89acc1f9e" />
+
 
 ---
 
