@@ -1,4 +1,4 @@
-# Canoun — AI-Powered Examination Answer Sheet Evaluator on AWS
+# Canoun — AI-Powered Examination Answer Sheet Evaluator
 
 [![AWS](https://img.shields.io/badge/AWS-Cloud%20Native-232F3E?logo=amazon-aws)](https://aws.amazon.com/)
 [![CDK v2](https://img.shields.io/badge/IaC-AWS%20CDK%20TypeScript-FF9900?logo=typescript)](https://aws.amazon.com/cdk/)
